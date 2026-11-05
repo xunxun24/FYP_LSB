@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FYP Image Security & Steganography Suite (LSB & MSB)</title>
-  <meta name="description" content="Final Year Project - Image Security Suite supporting LSB and MSB Bit-Swap Encryption, Password Security, Steganography, and Image Format Conversion.">
+  <title>FYP Image Security & Steganography Suite (MSB)</title>
+  <meta name="description" content="Final Year Project - Image Security Suite supporting MSB Bit-Swap Encryption, Password Security, Steganography, and Image Format Conversion.">
   
   <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20261016_3">
 </head>
 <body>
   <div class="app-container">
@@ -24,7 +24,7 @@
         </div>
         <div class="logo-text">
           <h1>BitShield <span class="badge-fyp">FYP Security Suite</span></h1>
-          <p>LSB & MSB Bit-Level Image Encryption & Steganography Platform</p>
+          <p>MSB Bit-Level Image Encryption & Steganography Platform</p>
         </div>
       </div>
       
@@ -36,11 +36,14 @@
         <button class="nav-tab" data-tab="decrypt-tab" id="tab-btn-decrypt">
           <i class="fa-solid fa-key"></i> Decrypt / Restore
         </button>
+        <button class="nav-tab" data-tab="video-enc-tab" id="tab-btn-video-enc">
+          <i class="fa-solid fa-film"></i> Encrypt Video
+        </button>
+        <button class="nav-tab" data-tab="video-dec-tab" id="tab-btn-video-dec">
+          <i class="fa-solid fa-unlock-keyhole"></i> Decrypt Video
+        </button>
         <button class="nav-tab" data-tab="stego-tab" id="tab-btn-stego">
           <i class="fa-solid fa-user-ninja"></i> Invisible Steganography
-        </button>
-        <button class="nav-tab" data-tab="inspector-tab" id="tab-btn-inspector">
-          <i class="fa-solid fa-microscope"></i> Live 8-Bit Inspector
         </button>
         <button class="nav-tab" data-tab="methodology-tab" id="tab-btn-methodology">
           <i class="fa-solid fa-book-bookmark"></i> FYP Theory & Math
@@ -68,9 +71,9 @@
             
             <div class="form-group margin-top">
               <div class="scope-header-flex">
-                <label><i class="fa-solid fa-brain"></i> AI Scope Target:</label>
+                <label><i class="fa-solid fa-wand-magic-sparkles"></i> AI Contour & Shape Scope:</label>
                 <span class="ai-status-badge" id="ai-status-badge">
-                  <i class="fa-solid fa-circle-notch fa-spin"></i> AI Vision Loading...
+                  <i class="fa-solid fa-circle-notch fa-spin"></i> Neural Vision Loading...
                 </span>
               </div>
               <div class="ai-scope-grid">
@@ -80,60 +83,137 @@
                   <span class="scope-btn-sub">Full image scramble</span>
                 </button>
                 <button type="button" class="ai-scope-btn" id="btn-scope-person" data-scope="person">
-                  <i class="fa-solid fa-person"></i>
-                  <span class="scope-btn-title">Person / Body</span>
-                  <span class="scope-btn-sub" id="sub-person-count">Auto-detect body</span>
+                  <i class="fa-solid fa-person-rays"></i>
+                  <span class="scope-btn-title">Body Silhouette</span>
+                  <span class="scope-btn-sub" id="sub-person-count">Exact body contour</span>
                 </button>
                 <button type="button" class="ai-scope-btn" id="btn-scope-face" data-scope="face">
                   <i class="fa-solid fa-face-smile"></i>
-                  <span class="scope-btn-title">Face Only</span>
-                  <span class="scope-btn-sub" id="sub-face-count">Auto-detect face</span>
+                  <span class="scope-btn-title">Face Contour</span>
+                  <span class="scope-btn-sub" id="sub-face-count">Exact facial shape</span>
                 </button>
-                <button type="button" class="ai-scope-btn" id="btn-scope-all" data-scope="all">
-                  <i class="fa-solid fa-users-viewfinder"></i>
-                  <span class="scope-btn-title">All (Faces + Bodies)</span>
-                  <span class="scope-btn-sub" id="sub-all-count">Combined detection</span>
+                <button type="button" class="ai-scope-btn" id="btn-scope-custom" data-scope="custom">
+                  <i class="fa-solid fa-vector-square"></i>
+                  <span class="scope-btn-title">Drag & Select ROI</span>
+                  <span class="scope-btn-sub" id="sub-custom-count">Signature, ID#, Area</span>
                 </button>
               </div>
+
+              <!-- ROI Drag Helper Banner -->
+              <div class="roi-helper-bar" id="enc-roi-helper" style="display:none;">
+                <div class="roi-info-text">
+                  <i class="fa-solid fa-crosshairs"></i>
+                  <span id="roi-status-text">Click and drag directly on the <b>Original Image canvas</b> to frame any area (e.g. signature, ID number, confidential text).</span>
+                </div>
+                <button type="button" class="btn btn-xs btn-outline" id="btn-clear-roi"><i class="fa-solid fa-rotate-left"></i> Reset Box</button>
+              </div>
+
               <div class="ai-detection-banner" id="ai-detection-banner" style="display:none;">
-                <span id="ai-detection-text"><i class="fa-solid fa-sparkles"></i> AI Detection Ready</span>
+                <span id="ai-detection-text"><i class="fa-solid fa-shapes"></i> Neural Contour Tracing Ready</span>
               </div>
             </div>
 
             <div class="form-group margin-top">
-              <label for="enc-mode-select"><i class="fa-solid fa-layer-group"></i> Select Encryption Method:</label>
-              <div class="mode-cards">
-                <div class="mode-card selected" data-mode="lsb" id="mode-card-lsb">
-                  <div class="mode-header">
-                    <span class="mode-badge lsb-badge">LSB Mode</span>
-                    <span class="mode-tag">Invisible / Light</span>
-                  </div>
-                  <p class="mode-desc">Swaps <b>last two bits (b₁b₀)</b>: <code>10</code> ↔ <code>01</code>. Virtually invisible to human eye.</p>
+              <label><i class="fa-solid fa-layer-group"></i> Active 3-Stage Reversible Cryptosystem:</label>
+              <div class="mode-card-single">
+                <div class="mode-header">
+                  <span class="mode-badge msb-badge"><i class="fa-solid fa-lock"></i> 3-Stage Reversible Encryption</span>
+                  <span class="mode-tag"><i class="fa-solid fa-shield-halved"></i> Triple Confusion & Diffusion</span>
                 </div>
-                <div class="mode-card" data-mode="msb" id="mode-card-msb">
-                  <div class="mode-header">
-                    <span class="mode-badge msb-badge">MSB Mode</span>
-                    <span class="mode-tag">Strong Scramble</span>
-                  </div>
-                  <p class="mode-desc">Swaps <b>first two bits (b₇b₆)</b>: <code>10</code> ↔ <code>01</code>. Heavy visual noise distortion.</p>
-                </div>
+                <p class="mode-desc">
+                  <b>Stage 1:</b> Pixel Position Permutation (Fisher-Yates shuffle)<br>
+                  <b>Stage 2:</b> RGB Channel Permutation (6-color rotation)<br>
+                  <b>Stage 3:</b> 2-MSB XOR Encryption (b₇b₆ ⊕ Key₂, preserving lower 6 bits)
+                </p>
               </div>
             </div>
 
-            <!-- Password Security -->
-            <div class="form-group">
-              <label for="enc-password"><i class="fa-solid fa-key"></i> Encryption Key / Password (Optional):</label>
-              <div class="input-with-icon">
-                <i class="fa-solid fa-lock icon-left"></i>
-                <input type="password" id="enc-password" placeholder="Enter security key or leave blank for pure bit-swap" class="form-input">
-                <button type="button" class="btn-toggle-pwd" id="toggle-enc-pwd"><i class="fa-solid fa-eye"></i></button>
+            <!-- Cryptographic Key Source Selection -->
+            <div class="form-group margin-top">
+              <label><i class="fa-solid fa-key"></i> Choose Encryption Key Source:</label>
+              <div class="key-selector-grid">
+                <button type="button" class="key-selector-card active" id="btn-enc-keytype-text">
+                  <div class="key-card-radio"><i class="fa-solid fa-circle-dot"></i></div>
+                  <div class="key-card-icon"><i class="fa-solid fa-font"></i></div>
+                  <div class="key-card-info">
+                    <span class="key-card-title">Text Password</span>
+                    <span class="key-card-sub">Type a secret password/passphrase</span>
+                  </div>
+                </button>
+                <button type="button" class="key-selector-card" id="btn-enc-keytype-image">
+                  <div class="key-card-radio"><i class="fa-regular fa-circle"></i></div>
+                  <div class="key-card-icon"><i class="fa-solid fa-image"></i></div>
+                  <div class="key-card-info">
+                    <span class="key-card-title">Image as Key</span>
+                    <span class="key-card-sub">Upload an image file as security key</span>
+                  </div>
+                </button>
               </div>
-              <small class="help-text"><i class="fa-solid fa-shield-cat"></i> Password seeds SHA-256 stream to determine which pixels undergo bit swapping.</small>
+
+              <!-- Option A: Text Password Key Prompt -->
+              <div id="enc-text-key-box" class="key-source-pane">
+                <div class="key-prompt-banner">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                  <span><b>Prompt:</b> Please enter a password or passphrase below to encrypt your image:</span>
+                </div>
+                <div class="input-with-icon" id="enc-pwd-input-wrap">
+                  <i class="fa-solid fa-lock icon-left"></i>
+                  <input type="password" id="enc-password" placeholder="Enter secret password to encrypt..." class="form-input" autocomplete="off">
+                  <button type="button" class="btn-toggle-pwd" id="toggle-enc-pwd" title="Show / Hide Password"><i class="fa-solid fa-eye"></i></button>
+                </div>
+                <div class="key-status-row">
+                  <small class="help-text"><i class="fa-solid fa-shield-cat"></i> Password seeds deterministic PRNG streams for pixel shuffle, RGB rotation, and 2-MSB XOR keys.</small>
+                  <span class="key-req-badge" id="enc-pwd-badge"><i class="fa-solid fa-circle-exclamation"></i> Password Required</span>
+                </div>
+              </div>
+
+              <!-- Option B: Image as Key Prompt -->
+              <div id="enc-img-key-box" class="key-source-pane" style="display: none;">
+                <div class="key-prompt-banner">
+                  <i class="fa-solid fa-cloud-arrow-up"></i>
+                  <span><b>Prompt:</b> Please upload an image file to use as the encryption key:</span>
+                </div>
+                <div class="key-image-upload-box" id="enc-key-image-dropzone">
+                  <input type="file" id="enc-key-image-input" accept="image/*" style="display: none;">
+                  <div class="key-img-prompt" id="enc-key-img-prompt">
+                    <i class="fa-solid fa-cloud-arrow-up drop-icon" style="font-size: 28px; color: var(--primary-blue); margin-bottom: 6px;"></i>
+                    <p style="font-size: 13.5px; font-weight: 600; color: var(--text-main); margin-bottom: 3px;">Click or Drag & Drop Key Image Here</p>
+                    <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px;">Select any image (PNG, JPG, BMP, WEBP). Its exact 256-bit binary SHA-256 digest seeds the encryption.</p>
+                    <div>
+                      <span class="btn btn-outline btn-xs" style="background: #ffffff; box-shadow: var(--shadow-sm); pointer-events: none;">
+                        <i class="fa-solid fa-folder-open"></i> Choose / Upload Key Image
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Key Image Card (Shown after selection) -->
+                  <div class="key-img-card" id="enc-key-img-card" style="display: none;">
+                    <img id="enc-key-img-thumb" src="" alt="Key Thumbnail" class="key-img-thumb">
+                    <div class="key-img-info">
+                      <div class="key-img-name" id="enc-key-img-name">key.png</div>
+                      <div class="key-img-meta" id="enc-key-img-meta">512 × 512 • 45 KB</div>
+                      <div class="key-img-hash" id="enc-key-img-hash"><i class="fa-solid fa-fingerprint"></i> SHA-256: <span>Calculating...</span></div>
+                    </div>
+                    <div style="display: flex; gap: 4px; align-items: center;">
+                      <button type="button" class="btn btn-xs btn-outline" id="btn-enc-change-key-img" title="Change Key Image">
+                        <i class="fa-solid fa-arrow-rotate-right"></i> Change
+                      </button>
+                      <button type="button" class="btn btn-xs btn-outline" id="btn-enc-remove-key-img" title="Remove Key Image">
+                        <i class="fa-solid fa-xmark"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="key-status-row">
+                  <small class="help-text"><i class="fa-solid fa-circle-check" style="color: var(--accent-emerald);"></i> SHA-256 binary digest locks the keystream. The exact same image file must be uploaded to decrypt!</small>
+                  <span class="key-req-badge" id="enc-img-badge"><i class="fa-solid fa-circle-exclamation"></i> Key Image Required</span>
+                </div>
+              </div>
             </div>
 
             <div class="action-row">
               <button id="btn-process-encrypt" class="btn btn-primary" disabled>
-                <i class="fa-solid fa-wand-magic-sparkles"></i> Execute Bit Encryption
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Execute 3-Stage Encryption
               </button>
             </div>
           </div>
@@ -221,35 +301,137 @@
               <input type="file" id="dec-file-input" accept="image/*" class="file-input">
               <i class="fa-solid fa-file-shield drop-icon"></i>
               <p class="drop-text">Drag & drop your encrypted image here or <span>Browse</span></p>
-              <p class="drop-subtext">Must be a lossless format (PNG, WEBP, BMP)</p>
+              <p class="drop-subtext">Must be a lossless format (PNG, WEBP, BMP) – Avoid lossy JPG</p>
             </div>
 
+            <div class="quick-action-bar margin-top">
+              <button type="button" id="btn-use-encrypted-from-enc" class="btn btn-sm btn-outline" style="width: 100%;">
+                <i class="fa-solid fa-arrow-right-arrow-left"></i> Use Encrypted Image from Encrypt Tab (1-Click Test)
+              </button>
+            </div>
+
+            <!-- Decryption Scope Selection -->
             <div class="form-group margin-top">
-              <label for="dec-mode-select"><i class="fa-solid fa-arrows-rotate"></i> Select Un-Swap Target:</label>
-              <div class="mode-cards">
-                <div class="mode-card selected" data-mode="lsb" id="dec-mode-card-lsb">
-                  <div class="mode-header">
-                    <span class="mode-badge lsb-badge">LSB Decrypt</span>
-                    <span class="mode-tag">Un-swap b₁b₀</span>
-                  </div>
-                  <p class="mode-desc">Reverses bit swaps on <b>last two bits (b₁b₀)</b>: <code>01</code> ↔ <code>10</code>.</p>
-                </div>
-                <div class="mode-card" data-mode="msb" id="dec-mode-card-msb">
-                  <div class="mode-header">
-                    <span class="mode-badge msb-badge">MSB Decrypt</span>
-                    <span class="mode-tag">Un-swap b₇b₆</span>
-                  </div>
-                  <p class="mode-desc">Reverses bit swaps on <b>first two bits (b₇b₆)</b>: <code>01</code> ↔ <code>10</code>.</p>
-                </div>
+              <label><i class="fa-solid fa-crosshairs"></i> Decryption Scope (Must match encryption scope):</label>
+              <div class="ai-scope-grid">
+                <button type="button" class="ai-scope-btn active" id="btn-dec-scope-full" data-scope="full">
+                  <i class="fa-solid fa-border-all"></i>
+                  <span class="scope-btn-title">Entire Image</span>
+                  <span class="scope-btn-sub">Full image restoration</span>
+                </button>
+                <button type="button" class="ai-scope-btn" id="btn-dec-scope-person" data-scope="person">
+                  <i class="fa-solid fa-person"></i>
+                  <span class="scope-btn-title">Body Silhouette</span>
+                  <span class="scope-btn-sub" id="sub-dec-person">Exact body contour</span>
+                </button>
+                <button type="button" class="ai-scope-btn" id="btn-dec-scope-face" data-scope="face">
+                  <i class="fa-solid fa-face-smile"></i>
+                  <span class="scope-btn-title">Face Contour</span>
+                  <span class="scope-btn-sub" id="sub-dec-face">Exact facial shape</span>
+                </button>
+                <button type="button" class="ai-scope-btn" id="btn-dec-scope-custom" data-scope="custom">
+                  <i class="fa-solid fa-vector-square"></i>
+                  <span class="scope-btn-title">Custom ROI</span>
+                  <span class="scope-btn-sub" id="sub-dec-custom">Selected area</span>
+                </button>
               </div>
             </div>
 
-            <div class="form-group">
-              <label for="dec-password"><i class="fa-solid fa-key"></i> Decryption Password:</label>
-              <div class="input-with-icon">
-                <i class="fa-solid fa-lock icon-left"></i>
-                <input type="password" id="dec-password" placeholder="Enter password used during encryption" class="form-input">
-                <button type="button" class="btn-toggle-pwd" id="toggle-dec-pwd"><i class="fa-solid fa-eye"></i></button>
+            <div class="form-group margin-top">
+              <label><i class="fa-solid fa-arrows-rotate"></i> Active Restoration Algorithm:</label>
+              <div class="mode-card-single">
+                <div class="mode-header">
+                  <span class="mode-badge msb-badge"><i class="fa-solid fa-rotate-left"></i> 3-Stage Reversible Decrypt</span>
+                  <span class="mode-tag"><i class="fa-solid fa-circle-check"></i> 100% Lossless Restoration</span>
+                </div>
+                <p class="mode-desc">
+                  <b>Reverse 1:</b> Undo 2-MSB XOR (b₇b₆ ⊕ Key₂)<br>
+                  <b>Reverse 2:</b> Undo RGB Channel Permutation (Inverse Color Mapping)<br>
+                  <b>Reverse 3:</b> Undo Pixel Position Permutation (Inverse Spatial Mapping)
+                </p>
+              </div>
+            </div>
+
+            <!-- Cryptographic Key Source Selection -->
+            <div class="form-group margin-top">
+              <label><i class="fa-solid fa-key"></i> Choose Decryption Key Source:</label>
+              <div class="key-selector-grid">
+                <button type="button" class="key-selector-card active" id="btn-dec-keytype-text">
+                  <div class="key-card-radio"><i class="fa-solid fa-circle-dot"></i></div>
+                  <div class="key-card-icon"><i class="fa-solid fa-font"></i></div>
+                  <div class="key-card-info">
+                    <span class="key-card-title">Text Password</span>
+                    <span class="key-card-sub">Type the matching password</span>
+                  </div>
+                </button>
+                <button type="button" class="key-selector-card" id="btn-dec-keytype-image">
+                  <div class="key-card-radio"><i class="fa-regular fa-circle"></i></div>
+                  <div class="key-card-icon"><i class="fa-solid fa-image"></i></div>
+                  <div class="key-card-info">
+                    <span class="key-card-title">Image as Key</span>
+                    <span class="key-card-sub">Upload the matching key image</span>
+                  </div>
+                </button>
+              </div>
+
+              <!-- Option A: Text Password Key Prompt -->
+              <div id="dec-text-key-box" class="key-source-pane">
+                <div class="key-prompt-banner">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                  <span><b>Prompt:</b> Please enter the exact password used during encryption:</span>
+                </div>
+                <div class="input-with-icon" id="dec-pwd-input-wrap">
+                  <i class="fa-solid fa-lock icon-left"></i>
+                  <input type="password" id="dec-password" placeholder="Enter matching password..." class="form-input" autocomplete="off">
+                  <button type="button" class="btn-toggle-pwd" id="toggle-dec-pwd" title="Show / Hide Password"><i class="fa-solid fa-eye"></i></button>
+                </div>
+                <div class="key-status-row">
+                  <small class="help-text"><i class="fa-solid fa-info-circle"></i> Password must match the encryption key exactly to restore pixels.</small>
+                  <span class="key-req-badge" id="dec-pwd-badge"><i class="fa-solid fa-circle-exclamation"></i> Password Required</span>
+                </div>
+              </div>
+
+              <!-- Option B: Image as Key Prompt -->
+              <div id="dec-img-key-box" class="key-source-pane" style="display: none;">
+                <div class="key-prompt-banner">
+                  <i class="fa-solid fa-cloud-arrow-up"></i>
+                  <span><b>Prompt:</b> Please upload the exact matching image used as the encryption key:</span>
+                </div>
+                <div class="key-image-upload-box" id="dec-key-image-dropzone">
+                  <input type="file" id="dec-key-image-input" accept="image/*" style="display: none;">
+                  <div class="key-img-prompt" id="dec-key-img-prompt">
+                    <i class="fa-solid fa-cloud-arrow-up drop-icon" style="font-size: 28px; color: var(--accent-emerald); margin-bottom: 6px;"></i>
+                    <p style="font-size: 13.5px; font-weight: 600; color: var(--text-main); margin-bottom: 3px;">Click or Drag & Drop Matching Key Image Here</p>
+                    <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px;">Upload the identical image file used during encryption</p>
+                    <div>
+                      <span class="btn btn-outline btn-xs" style="background: #ffffff; box-shadow: var(--shadow-sm); pointer-events: none;">
+                        <i class="fa-solid fa-folder-open"></i> Choose / Upload Matching Key Image
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Key Image Card (Shown after selection) -->
+                  <div class="key-img-card" id="dec-key-img-card" style="display: none;">
+                    <img id="dec-key-img-thumb" src="" alt="Key Thumbnail" class="key-img-thumb">
+                    <div class="key-img-info">
+                      <div class="key-img-name" id="dec-key-img-name">key.png</div>
+                      <div class="key-img-meta" id="dec-key-img-meta">512 × 512 • 45 KB</div>
+                      <div class="key-img-hash" id="dec-key-img-hash"><i class="fa-solid fa-fingerprint"></i> SHA-256: <span>Calculating...</span></div>
+                    </div>
+                    <div style="display: flex; gap: 4px; align-items: center;">
+                      <button type="button" class="btn btn-xs btn-outline" id="btn-dec-change-key-img" title="Change Key Image">
+                        <i class="fa-solid fa-arrow-rotate-right"></i> Change
+                      </button>
+                      <button type="button" class="btn btn-xs btn-outline" id="btn-dec-remove-key-img" title="Remove Key Image">
+                        <i class="fa-solid fa-xmark"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="key-status-row">
+                  <small class="help-text"><i class="fa-solid fa-info-circle"></i> If a single pixel or byte differs, SHA-256 avalanche effect prevents decryption.</small>
+                  <span class="key-req-badge" id="dec-img-badge"><i class="fa-solid fa-circle-exclamation"></i> Matching Key Image Required</span>
+                </div>
               </div>
             </div>
 
@@ -356,7 +538,7 @@
               </div>
 
               <button id="btn-stego-embed" class="btn btn-primary btn-block" disabled>
-                <i class="fa-solid fa-eye-slash"></i> Embed Secret into LSB
+                <i class="fa-solid fa-eye-slash"></i> Embed Secret into Carrier Image
               </button>
             </div>
 
@@ -406,112 +588,465 @@
         </div>
       </section>
 
-      <!-- ================= TAB 4: LIVE 8-BIT INSPECTOR ================= -->
-      <section id="inspector-tab" class="tab-pane">
-        <div class="panel glass">
-          <h2 class="panel-title"><i class="fa-solid fa-microscope"></i> Interactive 8-Bit Pixel Matrix Visualizer</h2>
-          <p class="section-intro">Inspect pixel color channels in real-time. See exactly how <b>MSB (b₇b₆)</b> and <b>LSB (b₁b₀)</b> bit-swapping alters binary numbers and visual colors.</p>
-          
-          <div class="grid-2col margin-top">
-            <!-- Canvas Inspector -->
-            <div class="inspector-canvas-box">
-              <div class="drop-zone" id="insp-drop-zone">
-                <input type="file" id="insp-file-input" accept="image/*" class="file-input">
-                <i class="fa-solid fa-crosshairs drop-icon"></i>
-                <p class="drop-text">Upload Image to inspect pixel bits</p>
-              </div>
-              <div class="canvas-wrap margin-top">
-                <canvas id="canvas-insp"></canvas>
-                <p class="hover-info" id="insp-coords"><i class="fa-solid fa-location-crosshairs"></i> Hover or click on canvas to select pixel</p>
+      <!-- ================= TAB 3: ENCRYPT VIDEO (3-5s SCRAMBLE & EXPORT) ================= -->
+      <section id="video-enc-tab" class="tab-pane">
+        <div class="grid-2col">
+          <!-- Video Encryption Control Panel -->
+          <div class="panel glass">
+            <h2 class="panel-title"><i class="fa-solid fa-film"></i> Video Encryption Controls</h2>
+
+            <!-- Video Upload Drop Zone -->
+            <div class="drop-zone" id="video-enc-drop-zone">
+              <input type="file" id="video-enc-file-input" accept="video/*,.mp4,.webm,.mov,.mkv,.avi,.m4v" class="file-input">
+              <i class="fa-solid fa-cloud-arrow-up drop-icon" id="video-enc-drop-icon"></i>
+              <p class="drop-text" id="video-enc-drop-text">Drag & drop original video here or <span>Browse</span></p>
+              <p class="drop-subtext">Supports MP4, WebM, MOV, MKV, AVI (3–5s recommended)</p>
+              <div style="margin-top: 14px;">
+                <span class="btn btn-outline btn-sm" style="background: #ffffff; box-shadow: var(--shadow-sm);">
+                  <i class="fa-solid fa-folder-open"></i> Choose Video File
+                </span>
               </div>
             </div>
 
-            <!-- Bit Matrix Display -->
-            <div class="bit-matrix-panel">
-              <div class="manual-input-box">
-                <label>Manual Pixel Channel Value (0 - 255):</label>
-                <div class="manual-controls">
-                  <input type="number" id="manual-pixel-val" min="0" max="255" value="161" class="form-input">
-                  <button id="btn-test-swap-lsb" class="btn btn-sm btn-outline"><i class="fa-solid fa-bolt"></i> Test LSB Swap</button>
-                  <button id="btn-test-swap-msb" class="btn btn-sm btn-outline"><i class="fa-solid fa-fire"></i> Test MSB Swap</button>
-                </div>
-              </div>
-
-              <!-- 8-Bit Cards -->
-              <div class="bit-breakdown-card margin-top">
-                <h3>8-Bit Binary Representation</h3>
-                <div class="bit-grid" id="bit-grid-container">
-                  <!-- Generated dynamically in JS -->
-                </div>
-                
-                <div class="bit-legend margin-top">
-                  <span class="legend-item msb-color"><i class="fa-solid fa-square"></i> MSB (Bits b₇, b₆ - Weight 128, 64)</span>
-                  <span class="legend-item mid-color"><i class="fa-solid fa-square"></i> Middle Bits (b₅..b₂)</span>
-                  <span class="legend-item lsb-color"><i class="fa-solid fa-square"></i> LSB (Bits b₁, b₀ - Weight 2, 1)</span>
-                </div>
-              </div>
-
-              <!-- Transformation Result Card -->
-              <div class="transform-comparison-card margin-top">
-                <div class="tr-box">
-                  <span class="tr-label">Original Value</span>
-                  <span class="tr-val" id="tr-val-orig">161</span>
-                  <span class="tr-bin" id="tr-bin-orig">1010 0001</span>
-                </div>
-                <div class="tr-arrow"><i class="fa-solid fa-right-long"></i></div>
-                <div class="tr-box highlighted">
-                  <span class="tr-label" id="tr-mode-name">LSB Swapped</span>
-                  <span class="tr-val" id="tr-val-new">162</span>
-                  <span class="tr-bin" id="tr-bin-new">1010 0010</span>
-                </div>
-              </div>
-
+            <!-- Video File Metadata Chip -->
+            <div class="video-meta-chip margin-top" id="video-enc-meta-chip" style="display: none;">
+              <div class="meta-item"><i class="fa-solid fa-file-video"></i> <span id="meta-video-enc-name">sample.mp4</span></div>
+              <div class="meta-item"><i class="fa-solid fa-clock"></i> <span id="meta-video-enc-duration">0.0s</span></div>
+              <div class="meta-item"><i class="fa-solid fa-expand"></i> <span id="meta-video-enc-res">0 × 0</span></div>
+              <div class="meta-item"><i class="fa-solid fa-layer-group"></i> <span id="meta-video-enc-frames">0 frames</span></div>
             </div>
+
+            <!-- Password Key -->
+            <div class="form-group margin-top">
+              <label for="video-enc-password"><i class="fa-solid fa-key"></i> Video Encryption Key / Password:</label>
+              <div class="password-wrapper">
+                <input type="password" id="video-enc-password" placeholder="Enter secure password for video frames..." class="form-input">
+                <button type="button" class="pwd-toggle" id="toggle-video-enc-pwd"><i class="fa-solid fa-eye"></i></button>
+              </div>
+              <p class="field-hint">The exact matching password will be required in the Decrypt Video tab.</p>
+            </div>
+
+            <!-- Algorithm Selection -->
+            <div class="form-group">
+              <label for="video-enc-algo-select"><i class="fa-solid fa-shield-halved"></i> Scramble Algorithm:</label>
+              <select id="video-enc-algo-select" class="form-select">
+                <option value="3stage" selected>3-Stage FYP BitShield (Pixel Shuffle + RGB Perm + 2-MSB XOR)</option>
+                <option value="2msb">2-MSB XOR Stream Cipher (Ultra Fast 60FPS)</option>
+                <option value="block">Macroblock Tile Permutation (16×16) + 2-MSB XOR</option>
+              </select>
+            </div>
+
+            <!-- Frame Rate and Resolution Settings -->
+            <div class="settings-grid margin-top">
+              <div class="form-group">
+                <label for="video-enc-fps-select"><i class="fa-solid fa-gauge-high"></i> Target Frame Rate:</label>
+                <select id="video-enc-fps-select" class="form-select">
+                  <option value="15">15 FPS (Fast Processing)</option>
+                  <option value="24" selected>24 FPS (Cinema Standard)</option>
+                  <option value="30">30 FPS (Smooth Web Playback)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="video-enc-scale-select"><i class="fa-solid fa-compress"></i> Resolution Scaling:</label>
+                <select id="video-enc-scale-select" class="form-select">
+                  <option value="optimized" selected>Optimized (Max 640px - Fast & Smooth)</option>
+                  <option value="original">Original Dimensions</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Processing Progress Box -->
+            <div class="video-progress-box margin-top" id="video-enc-progress-box" style="display: none;">
+              <div class="progress-header">
+                <span class="progress-title" id="video-enc-progress-status"><i class="fa-solid fa-circle-notch fa-spin"></i> Processing frames...</span>
+                <span class="progress-pct" id="video-enc-progress-pct">0%</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" id="video-enc-progress-fill" style="width: 0%;"></div>
+              </div>
+              <div class="progress-sub">
+                <span id="video-enc-progress-details">Frame 0 / 0</span>
+                <span id="video-enc-progress-eta">ETA: Calculating...</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-row margin-top">
+              <button id="btn-process-video-enc" class="btn btn-primary btn-block" disabled>
+                <i class="fa-solid fa-lock"></i> Encrypt Video Stream
+              </button>
+              <button id="btn-cancel-video-enc" class="btn btn-outline" style="display: none;">
+                <i class="fa-solid fa-stop"></i> Cancel
+              </button>
+            </div>
+
+            <div class="fidelity-card margin-top">
+              <div class="fidelity-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+              <div class="fidelity-text">
+                <h4>FYP Academic Cryptography Note:</h4>
+                <p>Frames undergo exact mathematical scrambling via deterministic SHA-256 seed sequences. The resulting stream is compiled into high-efficiency WebM (VP9/VP8) for browser playback and download.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video Players & Results Panel -->
+          <div class="panel glass">
+            <h2 class="panel-title"><i class="fa-solid fa-circle-play"></i> Video Encryption Playback & Comparison</h2>
+
+            <!-- Side by side video player preview -->
+            <div class="video-players-grid">
+              <!-- Left: Original Video Box -->
+              <div class="video-card">
+                <div class="video-card-header">
+                  <span class="video-tag orig"><i class="fa-solid fa-film"></i> Original Video</span>
+                  <span class="video-time-tag" id="video-enc-orig-time">0:00</span>
+                </div>
+                <div class="video-display-area">
+                  <video id="video-enc-orig-player" controls loop playsinline class="video-element" style="display: none;"></video>
+                  <div class="no-image-placeholder" id="ph-video-enc-orig">
+                    <i class="fa-solid fa-video"></i>
+                    <p>No video loaded yet</p>
+                    <span class="sub-hint">Upload a 3–5 second video to preview</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Encrypted Video Box -->
+              <div class="video-card">
+                <div class="video-card-header">
+                  <span class="video-tag enc"><i class="fa-solid fa-shield-halved"></i> Encrypted Stream</span>
+                  <span class="video-time-tag" id="video-enc-result-time">0:00</span>
+                </div>
+                <div class="video-display-area">
+                  <video id="video-enc-result-player" controls autoplay loop playsinline class="video-element" style="display: none;"></video>
+                  <div class="no-image-placeholder" id="ph-video-enc-result">
+                    <i class="fa-solid fa-lock"></i>
+                    <p>Encrypted result will appear here</p>
+                    <span class="sub-hint">Click "Encrypt Video Stream" to scramble</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Stream Thumbnail Canvas -->
+            <div class="video-live-frame-box margin-top" id="video-enc-live-box" style="display: none;">
+              <div class="live-frame-header">
+                <span><i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Live Cipher Frame Buffer:</span>
+                <span class="live-frame-badge" id="live-frame-enc-badge">Frame 0</span>
+              </div>
+              <div class="live-canvas-wrapper">
+                <canvas id="canvas-video-enc-thumb"></canvas>
+              </div>
+            </div>
+
+            <!-- Synchronized Playback Control Bar -->
+            <div class="sync-play-bar margin-top">
+              <button id="btn-sync-play-enc" class="btn btn-outline btn-sm" disabled>
+                <i class="fa-solid fa-arrows-rotate"></i> Play Both Synchronized
+              </button>
+              <button id="btn-sync-pause-enc" class="btn btn-outline btn-sm" disabled>
+                <i class="fa-solid fa-pause"></i> Pause Both
+              </button>
+              <button id="btn-sync-reset-enc" class="btn btn-outline btn-sm" disabled>
+                <i class="fa-solid fa-rotate-left"></i> Rewind (0:00)
+              </button>
+            </div>
+
+            <!-- Performance & Cryptographic Metrics -->
+            <div class="metrics-bar margin-top" id="video-enc-metrics-bar" style="display: none;">
+              <div class="metric-item">
+                <span class="m-label">Frames Processed</span>
+                <span class="m-value" id="val-video-enc-frames">0</span>
+              </div>
+              <div class="metric-item">
+                <span class="m-label">Encoding Speed</span>
+                <span class="m-value" id="val-video-enc-speed">0 FPS</span>
+              </div>
+              <div class="metric-item">
+                <span class="m-label">Scramble MSE</span>
+                <span class="m-value" id="val-video-enc-mse">0.00</span>
+              </div>
+              <div class="metric-item">
+                <span class="m-label">Noise PSNR</span>
+                <span class="m-value" id="val-video-enc-psnr">0.0 dB</span>
+              </div>
+            </div>
+
+            <!-- Video Export & Download -->
+            <div class="export-box margin-top">
+              <h3><i class="fa-solid fa-cloud-arrow-down"></i> Export & Save Video:</h3>
+              <div class="action-row">
+                <button id="btn-download-video-enc" class="btn btn-success btn-block" disabled>
+                  <i class="fa-solid fa-download"></i> Download Encrypted Video (.webm)
+                </button>
+              </div>
+              <button id="btn-goto-decrypt" class="btn btn-outline btn-block" style="margin-top: 10px; display: none; border-color: var(--primary-blue); color: var(--primary-blue);">
+                <i class="fa-solid fa-arrow-right"></i> Open in Decrypt Video Page &rarr;
+              </button>
+              <p class="export-hint" style="margin-top: 8px; font-size: 11.5px; color: var(--text-muted);">
+                <i class="fa-solid fa-circle-check" style="color: var(--accent-emerald);"></i> Standard WebM/VP9 video format — plays smoothly in Chrome, Edge, Firefox, VLC, and Windows Media Player.
+              </p>
+            </div>
+
           </div>
         </div>
       </section>
 
-      <!-- ================= TAB 5: FYP THEORY & METHODOLOGY ================= -->
+      <!-- ================= TAB 4: DECRYPT VIDEO (RESTORE & VERIFY) ================= -->
+      <section id="video-dec-tab" class="tab-pane">
+        <div class="grid-2col">
+          <!-- Video Decryption Control Panel -->
+          <div class="panel glass">
+            <h2 class="panel-title"><i class="fa-solid fa-unlock-keyhole"></i> Video Decryption Controls</h2>
+
+            <!-- Quick Bridge from Encrypt Page -->
+            <div id="dec-bridge-box" style="display: none; margin-bottom: 12px;">
+              <button type="button" class="btn btn-outline btn-block" id="btn-use-last-encrypted" style="border-color: #059669; color: #059669; background: #ecfdf5;">
+                <i class="fa-solid fa-bolt"></i> Use Video Encrypted in Encrypt Page
+              </button>
+            </div>
+
+            <!-- Video Upload Drop Zone -->
+            <div class="drop-zone" id="video-dec-drop-zone">
+              <input type="file" id="video-dec-file-input" accept="video/*,.webm,.mp4,.mov,.mkv,.avi" class="file-input">
+              <i class="fa-solid fa-cloud-arrow-up drop-icon" id="video-dec-drop-icon"></i>
+              <p class="drop-text" id="video-dec-drop-text">Drag & drop encrypted video here or <span>Browse</span></p>
+              <p class="drop-subtext">Upload the scrambled WebM/MP4 video file</p>
+              <div style="margin-top: 14px;">
+                <span class="btn btn-outline btn-sm" style="background: #ffffff; box-shadow: var(--shadow-sm);">
+                  <i class="fa-solid fa-folder-open"></i> Choose Encrypted Video
+                </span>
+              </div>
+            </div>
+
+            <!-- Video File Metadata Chip -->
+            <div class="video-meta-chip margin-top" id="video-dec-meta-chip" style="display: none;">
+              <div class="meta-item"><i class="fa-solid fa-file-video"></i> <span id="meta-video-dec-name">encrypted_video.webm</span></div>
+              <div class="meta-item"><i class="fa-solid fa-clock"></i> <span id="meta-video-dec-duration">0.0s</span></div>
+              <div class="meta-item"><i class="fa-solid fa-expand"></i> <span id="meta-video-dec-res">0 × 0</span></div>
+              <div class="meta-item"><i class="fa-solid fa-layer-group"></i> <span id="meta-video-dec-frames">0 frames</span></div>
+            </div>
+
+            <!-- Password Key -->
+            <div class="form-group margin-top">
+              <label for="video-dec-password"><i class="fa-solid fa-key"></i> Video Decryption Key / Password:</label>
+              <div class="password-wrapper">
+                <input type="password" id="video-dec-password" placeholder="Enter matching password used during encryption..." class="form-input">
+                <button type="button" class="pwd-toggle" id="toggle-video-dec-pwd"><i class="fa-solid fa-eye"></i></button>
+              </div>
+              <p class="field-hint">Enter the matching password to invert the 2-MSB permutation and pixel shuffles.</p>
+            </div>
+
+            <!-- Algorithm Selection -->
+            <div class="form-group">
+              <label for="video-dec-algo-select"><i class="fa-solid fa-shield-halved"></i> Scramble Algorithm:</label>
+              <select id="video-dec-algo-select" class="form-select">
+                <option value="3stage" selected>3-Stage FYP BitShield (Pixel Shuffle + RGB Perm + 2-MSB XOR)</option>
+                <option value="2msb">2-MSB XOR Stream Cipher (Ultra Fast 60FPS)</option>
+                <option value="block">Macroblock Tile Permutation (16×16) + 2-MSB XOR</option>
+              </select>
+            </div>
+
+            <!-- Frame Rate and Resolution Settings -->
+            <div class="settings-grid margin-top">
+              <div class="form-group">
+                <label for="video-dec-fps-select"><i class="fa-solid fa-gauge-high"></i> Target Frame Rate:</label>
+                <select id="video-dec-fps-select" class="form-select">
+                  <option value="15">15 FPS (Fast Processing)</option>
+                  <option value="24" selected>24 FPS (Cinema Standard)</option>
+                  <option value="30">30 FPS (Smooth Web Playback)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="video-dec-scale-select"><i class="fa-solid fa-compress"></i> Resolution Scaling:</label>
+                <select id="video-dec-scale-select" class="form-select">
+                  <option value="optimized" selected>Optimized (Max 640px - Fast & Smooth)</option>
+                  <option value="original">Original Dimensions</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Processing Progress Box -->
+            <div class="video-progress-box margin-top" id="video-dec-progress-box" style="display: none;">
+              <div class="progress-header">
+                <span class="progress-title" id="video-dec-progress-status"><i class="fa-solid fa-circle-notch fa-spin"></i> Decrypting frames...</span>
+                <span class="progress-pct" id="video-dec-progress-pct">0%</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" id="video-dec-progress-fill" style="width: 0%;"></div>
+              </div>
+              <div class="progress-sub">
+                <span id="video-dec-progress-details">Frame 0 / 0</span>
+                <span id="video-dec-progress-eta">ETA: Calculating...</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-row margin-top">
+              <button id="btn-process-video-dec" class="btn btn-primary btn-block" disabled>
+                <i class="fa-solid fa-unlock"></i> Decrypt Video Stream
+              </button>
+              <button id="btn-cancel-video-dec" class="btn btn-outline" style="display: none;">
+                <i class="fa-solid fa-stop"></i> Cancel
+              </button>
+            </div>
+
+            <div class="fidelity-card margin-top">
+              <div class="fidelity-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+              <div class="fidelity-text">
+                <h4>FYP Academic Decryption Proof:</h4>
+                <p>Inverse permutation operates symmetrically: inverting MSB bitwise XOR, color permutations, and 2D pixel mappings to restore the clear visual stream.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video Players & Results Panel -->
+          <div class="panel glass">
+            <h2 class="panel-title"><i class="fa-solid fa-circle-play"></i> Video Decryption Playback & Comparison</h2>
+
+            <!-- Side by side video player preview -->
+            <div class="video-players-grid">
+              <!-- Left: Encrypted Input Video Box -->
+              <div class="video-card">
+                <div class="video-card-header">
+                  <span class="video-tag enc"><i class="fa-solid fa-shield-halved"></i> Encrypted Input</span>
+                  <span class="video-time-tag" id="video-dec-orig-time">0:00</span>
+                </div>
+                <div class="video-display-area">
+                  <video id="video-dec-orig-player" controls loop playsinline class="video-element" style="display: none;"></video>
+                  <div class="no-image-placeholder" id="ph-video-dec-orig">
+                    <i class="fa-solid fa-file-video"></i>
+                    <p>No encrypted video loaded</p>
+                    <span class="sub-hint">Upload scrambled video to decrypt</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Restored Video Box -->
+              <div class="video-card">
+                <div class="video-card-header">
+                  <span class="video-tag restored"><i class="fa-solid fa-circle-check"></i> Restored Video</span>
+                  <span class="video-time-tag" id="video-dec-result-time">0:00</span>
+                </div>
+                <div class="video-display-area">
+                  <video id="video-dec-result-player" controls autoplay loop playsinline class="video-element" style="display: none;"></video>
+                  <div class="no-image-placeholder" id="ph-video-dec-result">
+                    <i class="fa-solid fa-unlock"></i>
+                    <p>Decrypted video will appear here</p>
+                    <span class="sub-hint">Click "Decrypt Video Stream" to restore</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Stream Thumbnail Canvas -->
+            <div class="video-live-frame-box margin-top" id="video-dec-live-box" style="display: none;">
+              <div class="live-frame-header">
+                <span><i class="fa-solid fa-bolt" style="color: #059669;"></i> Live Decryption Frame Buffer:</span>
+                <span class="live-frame-badge" id="live-frame-dec-badge">Frame 0</span>
+              </div>
+              <div class="live-canvas-wrapper">
+                <canvas id="canvas-video-dec-thumb"></canvas>
+              </div>
+            </div>
+
+            <!-- Synchronized Playback Control Bar -->
+            <div class="sync-play-bar margin-top">
+              <button id="btn-sync-play-dec" class="btn btn-outline btn-sm" disabled>
+                <i class="fa-solid fa-arrows-rotate"></i> Play Both Synchronized
+              </button>
+              <button id="btn-sync-pause-dec" class="btn btn-outline btn-sm" disabled>
+                <i class="fa-solid fa-pause"></i> Pause Both
+              </button>
+              <button id="btn-sync-reset-dec" class="btn btn-outline btn-sm" disabled>
+                <i class="fa-solid fa-rotate-left"></i> Rewind (0:00)
+              </button>
+            </div>
+
+            <!-- Performance & Cryptographic Metrics -->
+            <div class="metrics-bar margin-top" id="video-dec-metrics-bar" style="display: none;">
+              <div class="metric-item">
+                <span class="m-label">Frames Decrypted</span>
+                <span class="m-value" id="val-video-dec-frames">0</span>
+              </div>
+              <div class="metric-item">
+                <span class="m-label">Decoding Speed</span>
+                <span class="m-value" id="val-video-dec-speed">0 FPS</span>
+              </div>
+              <div class="metric-item">
+                <span class="m-label">Restoration Quality</span>
+                <span class="m-value" id="val-video-dec-quality">Lossless Bit-Exact</span>
+              </div>
+              <div class="metric-item">
+                <span class="m-label">Visual Status</span>
+                <span class="m-value" id="val-video-dec-status" style="color: var(--accent-emerald);">Verified</span>
+              </div>
+            </div>
+
+            <!-- Video Export & Download -->
+            <div class="export-box margin-top">
+              <h3><i class="fa-solid fa-cloud-arrow-down"></i> Export & Save Restored Video:</h3>
+              <div class="action-row">
+                <button id="btn-download-video-dec" class="btn btn-success btn-block" disabled>
+                  <i class="fa-solid fa-download"></i> Download Restored Video (.webm)
+                </button>
+              </div>
+              <p class="export-hint" style="margin-top: 8px; font-size: 11.5px; color: var(--text-muted);">
+                <i class="fa-solid fa-circle-check" style="color: var(--accent-emerald);"></i> Restored video format (.webm) plays cleanly in all media players and web browsers.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 4: FYP THEORY & METHODOLOGY ================= -->
       <section id="methodology-tab" class="tab-pane">
         <div class="panel glass">
           <h2 class="panel-title"><i class="fa-solid fa-graduation-cap"></i> FYP Methodology & Mathematical Proof</h2>
-          <p class="section-intro">Comprehensive theoretical foundation, bit manipulation formulas, and algorithmic flowcharts for your FYP report.</p>
+          <p class="section-intro">Comprehensive theoretical foundation, MSB bit manipulation formulas, and algorithmic flowcharts for your FYP report.</p>
 
           <div class="theory-grid margin-top">
             <div class="theory-card">
-              <h3><i class="fa-solid fa-calculator"></i> 1. The 8-Bit Pixel Standard</h3>
-              <p>Each color channel (Red, Green, Blue) in a 24-bit RGB image is represented as an 8-bit unsigned integer V ∈ [0, 255]:</p>
-              <div class="formula-block">
-                V = b₇·128 + b₆·64 + b₅·32 + b₄·16 + b₃·8 + b₂·4 + b₁·2 + b₀·1
-              </div>
-            </div>
-
-            <div class="theory-card">
-              <h3><i class="fa-solid fa-eye-slash"></i> 2. LSB Bit-Swap (Light Encrypt)</h3>
-              <p>Targets bits b₁b₀ (Weights 2 and 1). Performs deterministic symmetric swap:</p>
+              <h3><i class="fa-solid fa-arrows-split-up-and-left"></i> 1. Stage 1: Pixel Permutation</h3>
+              <p>Spatially scrambles pixel coordinates using a <b>Fisher-Yates shuffle</b> seeded by the SHA-256 password PRNG:</p>
               <div class="code-block">
-                IF (b₁b₀ == '10') THEN b₁b₀ = '01'<br>
-                ELSE IF (b₁b₀ == '01') THEN b₁b₀ = '10'
+                For k = M-1 down to 1:<br>
+                &nbsp;&nbsp;j = PRNG.nextInt(k + 1)<br>
+                &nbsp;&nbsp;swap(Perm[k], Perm[j])
               </div>
-              <p class="theory-sub"><b>Maximum Distortion:</b> ΔV = ±1. Human visual system threshold is not reached. Image remains visually unchanged.</p>
+              <p class="theory-sub">Destroys spatial auto-correlation and object boundaries.</p>
             </div>
 
             <div class="theory-card">
-              <h3><i class="fa-solid fa-burst"></i> 3. MSB Bit-Swap (Strong Encrypt)</h3>
-              <p>Targets bits b₇b₆ (Weights 128 and 64). Performs deterministic symmetric swap:</p>
+              <h3><i class="fa-solid fa-palette"></i> 2. Stage 2: RGB Channel Permutation</h3>
+              <p>Permutes the color channel order [R, G, B] per pixel using 1 of 6 bijective group permutations:</p>
               <div class="code-block">
-                IF (b₇b₆ == '10') THEN b₇b₆ = '01'<br>
-                ELSE IF (b₇b₆ == '01') THEN b₇b₆ = '10'
+                PermId = PRNG.nextInt(6)<br>
+                [R', G', B'] = Permute([R, G, B], PermId)
               </div>
-              <p class="theory-sub"><b>Maximum Distortion:</b> ΔV = ±64. High-energy visual frequencies are severely altered, creating strong visual static/noise.</p>
+              <p class="theory-sub">Scrambles color chrominance and breaks channel inter-dependencies.</p>
             </div>
 
             <div class="theory-card">
-              <h3><i class="fa-solid fa-arrows-spin"></i> 4. Proof of Lossless Decryption</h3>
-              <p>Since the bit swap mapping f(x) is an <b>involution</b> (its own inverse f(f(x)) = x):</p>
-              <div class="formula-block">
-                Original (10₂) → Swap → 01₂ → Swap → 10₂ (100% Exact Restoration)
+              <h3><i class="fa-solid fa-bolt"></i> 3. Stage 3: 2-MSB XOR Encryption</h3>
+              <p>Extracts top 2 MSB bits (b₇b₆) of every color byte and XORs with password-generated 2-bit key K₂ ∈ {0..3}:</p>
+              <div class="code-block">
+                b₇b₆' = b₇b₆ ⊕ K₂<br>
+                Byte' = (Byte & 0x3F) | (b₇b₆' &lt;&lt; 6)
               </div>
+              <p class="theory-sub">Preserves lower 6 bits (b₅..b₀) while injecting strong pseudo-random visual noise.</p>
+            </div>
+
+            <div class="theory-card">
+              <h3><i class="fa-solid fa-rotate-left"></i> 4. Proof of Exact Lossless Decryption</h3>
+              <p>Decryption executes the inverse operations in exact reverse order:</p>
+              <div class="formula-block">
+                Encrypted → Undo 2-MSB XOR → Undo RGB Perm → Undo Pixel Perm → Original Image (MSE = 0.00, PSNR = ∞ dB)
+              </div>
+              <p class="theory-sub">100% reversible, mathematically lossless recovery when provided the matching key.</p>
             </div>
           </div>
 
@@ -526,13 +1061,13 @@
     </footer>
   </div>
 
-  <!-- AI Vision Models (TensorFlow.js + BlazeFace + COCO-SSD) -->
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
+  <!-- AI Neural Segmentation & Vision Models (TensorFlow.js + BodyPix + BlazeFace) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.2.0/dist/body-pix.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface@0.0.7/dist/blazeface.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
 
   <!-- Core App Scripts -->
-  <script src="js/bit-engine.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/bit-engine.js?v=20261016_3"></script>
+  <script src="js/app.js?v=20261016_3"></script>
 </body>
 </html>
